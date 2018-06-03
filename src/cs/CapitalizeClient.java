@@ -83,6 +83,7 @@ public class CapitalizeClient {
     	out.println("login");
     	out.println(username);
     	out.println(password);
+    	out.flush();
     	System.out.println("Done writing...");
     	try {
     		//wait(1500);
