@@ -11,14 +11,23 @@ import frames.Login;
 
 public class CapitalizeServer {
 
-    
+
     public static void main(String[] args) throws Exception {
         System.out.println("The capitalization server is running.");
         int clientNumber = 0;
         ServerSocket listener = new ServerSocket(9898);
         try {
-                new Capitalizer(listener.accept(), clientNumber++).run();
-        } finally {
+            clientNumber += 1;
+            final Socket socket = listener.accept();
+            final Capitalizer capitalizer = new Capitalizer(socket, clientNumber);
+
+            capitalizer.run();
+            capitalizer.join();
+            System.out.println("Thread finished running");
+
+        } catch (final Exception someException) {
+            System.err.println("Something went wrong!");
+            someException.printStackTrace();
             listener.close();
         }
     }
@@ -27,11 +36,12 @@ public class CapitalizeServer {
         private Socket socket;
         private int clientNumber;
 
-        public Capitalizer(Socket socket, int clientNumber) {
+        Capitalizer(Socket socket, int clientNumber) {
             this.socket = socket;
             this.clientNumber = clientNumber;
             log("New connection with client# " + clientNumber + " at " + socket);
         }
+
         public void run() {
             try {
                 BufferedReader in = new BufferedReader(
@@ -39,17 +49,16 @@ public class CapitalizeServer {
                 PrintWriter out = new PrintWriter(socket.getOutputStream());
                 out.flush();
                 while (true) {
-                	System.out.println("Reading line...");
-                	System.out.println(socket.getPort());
+                    System.out.println("Reading line...");
+                    System.out.println(socket.getPort());
                     String input = in.readLine();
                     System.out.println(input);
-                    switch(input)
-                    {
-                    	case "login" :	  
-                    		String u = in.readLine();
-                    		String p = in.readLine();
-                    		String message = Login.serverLogin(u, p);
-                    		out.write(message);
+                    switch (input) {
+                        case "login":
+                            String u = in.readLine();
+                            String p = in.readLine();
+                            String message = Login.serverLogin(u, p);
+                            out.write(message);
                     }
                     if (input == null || input.equals(".")) {
                         break;

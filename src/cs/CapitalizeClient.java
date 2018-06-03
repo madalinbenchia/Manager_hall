@@ -74,15 +74,15 @@ public class CapitalizeClient {
         
     }
     
-    public String sendLoginToServer(String u, String pass) throws Exception
+    public String sendLoginToServer(String username, String password) throws Exception
     {
     	in = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream());
     	System.out.println("m1");
-    	out.write("login");
-    	out.write(u);
-    	out.write(pass);
+    	out.println("login");
+    	out.println(username);
+    	out.println(password);
     	System.out.println("Done writing...");
     	try {
     		//wait(1500);
